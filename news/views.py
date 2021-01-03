@@ -6,24 +6,16 @@ from datetime import datetime
 from django.core.paginator import Paginator
 from .filters import PostFilter
 from .forms import PostForm
-
-class Posts(View):
-
-    def get(self, request):
-        posts = Post.objects.order_by('-id')
-        p = Paginator(posts, 1)
-
-        posts = p.get_page(request.GET.get('page', 1))
-
-        data = {
-            'posts': posts,
-        }
-        return render(request, 'posts.html', data)
+from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 
-class AddView(CreateView):
-    template_name = 'add_article.html'
+
+class AddProtectedView(PermissionRequiredMixin, CreateView):
+    template_name = '../../djangoNewsD4/templates/add_article.html'
     form_class = PostForm
+    login_url='/accounts/login'
+    permission_required = ('news.add_post')
 
 
 class AuthorsList(ListView):
@@ -44,34 +36,38 @@ class PostList(ListView):
     context_object_name = 'posts'
     queryset = Post.objects.order_by('-id')
     paginate_by = 3
+    form_class = PostForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['time_now'] = datetime.utcnow()
         context['filter'] = PostFilter(self.request.GET, queryset=self.get_queryset())
-
+        context['form'] = PostForm()
         return context
+
 
 class PostDetail(DetailView):
     template_name = 'post.html'
     context_object_name = 'post'
     queryset = Post.objects.all()
 
-class PostUpdateView(UpdateView):
-    template_name = 'add_article.html'
+class PostUpdateView(PermissionRequiredMixin, UpdateView):
+    template_name = '../../djangoNewsD4/templates/add_article.html'
     form_class = PostForm
+    permission_required = ('news.change_post')
 
     def get_object(self, **kwargs):
         id = self.kwargs.get('pk')
         return Post.objects.get(pk=id)
-class PostDeleteView(DeleteView):
-    template_name = 'post_delete.html'
+class PostDeleteView(PermissionRequiredMixin, DeleteView):
+    template_name = '../../djangoNewsD4/templates/post_delete.html'
     queryset = Post.objects.all()
     success_url = '/news/'
+    permission_required = ('news.delete_post')
 
 class SearchList(ListView):
     model = Post
-    template_name = 'search.html'
+    template_name = '../../djangoNewsD4/templates/search.html'
     context_object_name = 'posts'
     paginate_by = 1
 
@@ -85,24 +81,14 @@ class SearchList(ListView):
 
 class SearchDetail(DetailView):
     model = Post
-    template_name = 'search_detail.html'
+    template_name = '../../djangoNewsD4/templates/search_detail.html'
     context_object_name = 'post'
     queryset = Post.objects.all()
 
 
 
 
-class Search(View):
-    def get(self, request):
-        posts = Post.objects.order_by('-id')
-        p = Paginator(posts, 1)
 
-        posts = p.get_page(request.GET.get('page', 1))
-
-        data = {
-            'posts': posts,
-        }
-        return render(request, 'search.html', data)
 
 
 

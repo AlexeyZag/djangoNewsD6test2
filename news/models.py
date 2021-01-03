@@ -95,4 +95,6 @@ class Comment(models.Model):
     def __str__(self):
         return f'{self.comment_post}, {self.comment_user}, {self.com_rating}'
 
-
+User.objects.all()
+a = User.objects.get(username= 'Alex')
+a.first_name = 'Алексей'

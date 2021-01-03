@@ -40,8 +40,15 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.flatpages',
     'django_filters',
-    'Fpages',
-    'news',
+    'news.apps.NewsConfig',
+    'sign.apps.SignConfig',
+    'protect.apps.ProtectConfig',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # ... include the providers you want to enable:
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -75,6 +82,16 @@ TEMPLATES = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+ACCOUNT_FORMS = {'signup': 'sign.models.BasicSignupForm'}
+LOGIN_URL = '/accounts/login'
+LOGIN_REDIRECT_URL = '/'
 WSGI_APPLICATION = 'djangoNews1.wsgi.application'
 
 
@@ -128,6 +145,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static"
-
-
 ]
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
