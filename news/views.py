@@ -51,6 +51,12 @@ class PostDetail(DetailView):
     context_object_name = 'post'
     queryset = Post.objects.all()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        id = self.kwargs.get('pk')
+        context['categories'] = Post.objects.get(pk=id).categories.all()
+        return context
+
 class PostUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = '../../djangoNewsD4/templates/add_article.html'
     form_class = PostForm

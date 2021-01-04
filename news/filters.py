@@ -9,5 +9,5 @@ class PostFilter(FilterSet):
         fields = {'headline': ['icontains'],
                   'create_time': ['range'],
                   'author': ['exact'],
-
+                  'categories': ['exact'],
                   }

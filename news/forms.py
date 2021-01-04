@@ -1,9 +1,22 @@
-from django.forms import ModelForm, BooleanField
+from django.forms import ModelForm, TextInput, Textarea, Select, SelectMultiple, CheckboxSelectMultiple
 from .models import Post
 class PostForm(ModelForm):
-    check_box = BooleanField(label='Ало, Галочка!')
-    # в класс мета как обычно надо написать модель по которой будет строится форма и нужные нам поля. Мы уже делали что-то похожее с фильтрами.
     class Meta:
-
         model = Post
-        fields = ['author', 'headline', 'text', 'article_default_news']
+        fields = ['author', 'headline', 'text', 'article_default_news',  'categories']
+        widgets = {
+            'text': Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Введите текст...'
+            }),
+
+            'article_default_news': Select(attrs={
+                'class': 'custom-select',
+                'option selected': 'Выбрать...'
+            }),
+            'categories': CheckboxSelectMultiple(attrs={
+                'multiple class': 'form-control',
+                'class': 'special',
+                'size': '100',
+            }),
+        }

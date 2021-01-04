@@ -69,7 +69,7 @@ class Post(models.Model):
         return self.text[:124] + '...'
 
     def __str__(self):
-        return f'Автор: {self.author.author.username}, вид работы: {self.article_default_news}, Заголовок: {self.headline}, оценка {self.rating_of_post}'
+        return f'Автор: {self.author.author.username}, вид работы: {self.article_default_news}, Заголовок: {self.headline}, оценка: {self.rating_of_post}, категории {self.categories}: '
 
 class PostCategory(models.Model):
     posts = models.ForeignKey(Post, on_delete = models.CASCADE)
@@ -95,6 +95,5 @@ class Comment(models.Model):
     def __str__(self):
         return f'{self.comment_post}, {self.comment_user}, {self.com_rating}'
 
-User.objects.all()
-a = User.objects.get(username= 'Alex')
-a.first_name = 'Алексей'
+#for i in Post.objects.all()[1].categories.all().values('tag'): print(i['tag'])
+#Post.objects.get(pk=id).categories.all().values('tag')
