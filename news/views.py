@@ -8,9 +8,7 @@ from .filters import PostFilter
 from .forms import PostForm
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.models import Group
-from django.contrib.auth.decorators import login_required
-from sign.views import upgrade_me
+
 
 
 
