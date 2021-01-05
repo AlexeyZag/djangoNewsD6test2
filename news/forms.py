@@ -3,7 +3,8 @@ from .models import Post
 class PostForm(ModelForm):
     class Meta:
         model = Post
-        fields = ['author', 'headline', 'text', 'article_default_news',  'categories']
+
+        fields = ['headline', 'text', 'article_default_news',  'categories']
         widgets = {
             'text': Textarea(attrs={
                 'class': 'form-control',

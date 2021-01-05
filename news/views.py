@@ -8,6 +8,9 @@ from .filters import PostFilter
 from .forms import PostForm
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.models import Group
+from django.contrib.auth.decorators import login_required
+from sign.views import upgrade_me
 
 
 
@@ -16,7 +19,16 @@ class AddProtectedView(PermissionRequiredMixin, CreateView):
     form_class = PostForm
     login_url='/accounts/login'
     permission_required = ('news.add_post')
+    model = Post
+    queryset = Post.objects.all()
 
+    def form_valid(self, form):
+        self.object = form.save(commit= False)
+        author = self.request.user
+        id = Author.objects.get(author= User.objects.get(username = author)).id
+        self.object.author_id = id
+        self.object.save()
+        return  super().form_valid(form)
 
 class AuthorsList(ListView):
     model = Author
@@ -54,7 +66,10 @@ class PostDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         id = self.kwargs.get('pk')
-        context['categories'] = Post.objects.get(pk=id).categories.all()
+        a = 'Категории: '
+        for i in Post.objects.get(pk=id).categories.all().values('tag'):
+            a += (i['tag'] + ' ')
+        context['categories'] = a
         return context
 
 class PostUpdateView(PermissionRequiredMixin, UpdateView):

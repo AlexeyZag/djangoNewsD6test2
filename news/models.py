@@ -48,10 +48,11 @@ class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name = "Автор")
     article_default_news = models.CharField(max_length = 7, choices = POSITIONS, default = news)
     create_time = models.DateTimeField(auto_now_add = True, verbose_name= 'Дата создания')
-    categories = models.ManyToManyField(Category, through= 'PostCategory', null=True, blank=True, verbose_name= 'Тэг')
+    categories = models.ManyToManyField(Category, through= 'PostCategory', null=True, blank=True, verbose_name= 'Тэг', related_name = 'categories')
     headline = models.CharField(max_length = 255, verbose_name= 'Заголовок')
     text = models.TextField()
     rating_of_post = models.IntegerField(default=0)
+
 
     def get_absolute_url(self):  # добавим абсолютный путь чтобы после создания нас перебрасывало на страницу с новостью
         return f'/news/{self.id}'
@@ -69,14 +70,14 @@ class Post(models.Model):
         return self.text[:124] + '...'
 
     def __str__(self):
-        return f'Автор: {self.author.author.username}, вид работы: {self.article_default_news}, Заголовок: {self.headline}, оценка: {self.rating_of_post}, категории {self.categories}: '
+        return f"Автор: {self.author.author.username}, вид работы: {self.article_default_news}, Заголовок: {self.headline}, оценка: {self.rating_of_post}"
 
 class PostCategory(models.Model):
     posts = models.ForeignKey(Post, on_delete = models.CASCADE)
     category = models.ForeignKey(Category, on_delete = models.CASCADE)
 
     def __str__(self):
-        return f'{self.posts}, {self.category}'
+        return f'{self.category}'
 
 class Comment(models.Model):
     comment_post = models.ForeignKey(Post, on_delete = models.CASCADE)
