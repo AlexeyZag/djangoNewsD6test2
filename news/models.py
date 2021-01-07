@@ -1,8 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.models import AbstractUser
+
 
 
 # Create your models here.
+
+
+
+
 class Author(models.Model):
     author = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
     rating = models.IntegerField(default=0)
@@ -29,14 +34,20 @@ class Author(models.Model):
     def __str__(self):
         return f'{self.author.username}'
 
-
-
-
 class Category(models.Model):
     tag = models.CharField(max_length= 100, unique=True)
+    subscribers = models.ManyToManyField(User, on_delete=models.CASCADE, blank=True, null=True,
+                                    related_name='subscription',
+                                    verbose_name='Подписчики')
 
     def __str__(self):
-        return f'{self.tag}'
+        return f'{self.tag}, {self.subscribers}'
+
+class CategoryUser(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+
 
 class Post(models.Model):
     article = 'Статья'
@@ -72,6 +83,7 @@ class Post(models.Model):
     def __str__(self):
         return f"Автор: {self.author.author.username}, вид работы: {self.article_default_news}, Заголовок: {self.headline}, оценка: {self.rating_of_post}"
 
+
 class PostCategory(models.Model):
     posts = models.ForeignKey(Post, on_delete = models.CASCADE)
     category = models.ForeignKey(Category, on_delete = models.CASCADE)
@@ -96,5 +108,7 @@ class Comment(models.Model):
     def __str__(self):
         return f'{self.comment_post}, {self.comment_user}, {self.com_rating}'
 
-#for i in Post.objects.all()[1].categories.all().values('tag'): print(i['tag'])
+
+
+#Category.objects.all().values('subscribers')
 #Post.objects.get(pk=id).categories.all().values('tag')

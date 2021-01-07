@@ -1,13 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, reverse, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Author, Category, Comment, Post, PostCategory, User
+from .models import Author, Post, User
 from datetime import datetime
 from django.core.paginator import Paginator
 from .filters import PostFilter
 from .forms import PostForm
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+
 
 
 
